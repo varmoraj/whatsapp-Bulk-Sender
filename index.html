@@ -1,0 +1,128 @@
+<div class="bulk-section">
+    <h3 class="section-title">Advanced Bulk Sender</h3>
+    
+    <div class="form-group">
+        <label for="phone-numbers">Phone Numbers (one per line)</label>
+        <textarea id="phone-numbers" placeholder="9123456789&#10;9876543210&#10;9765432109" rows="8"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="bulk-message">Message Template</label>
+        <textarea id="bulk-message" placeholder="Hello {NAME}, this is a reminder..." rows="6"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="delay-time">Delay between messages (seconds)</label>
+        <input type="number" id="delay-time" value="3" min="2" max="10">
+    </div>
+
+    <button id="send-bulk">Start Bulk Sending</button>
+    <button id="stop-bulk" style="display: none; background: #dc2626;">Stop</button>
+    
+    <div class="progress-bar" id="progress-bar" style="display: none;">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    
+    <div id="bulk-status"></div>
+
+    <!-- Hidden link for opening WhatsApp -->
+    <a id="whatsapp-link" target="_blank" style="display: none;"></a>
+</div>
+
+<script>
+    let isSending = false;
+    let currentIndex = 0;
+    let numbersArray = [];
+
+    document.getElementById('send-bulk').addEventListener('click', startBulkSending);
+    document.getElementById('stop-bulk').addEventListener('click', stopBulkSending);
+
+    function startBulkSending() {
+        const numbersText = document.getElementById('phone-numbers').value;
+        const message = document.getElementById('bulk-message').value;
+        const delay = document.getElementById('delay-time').value * 1000;
+        
+        numbersArray = numbersText.split('\n')
+            .map(num => num.trim())
+            .filter(num => num.length >= 10)
+            .map(num => num.replace(/[^\d]/g, ''));
+        
+        if (numbersArray.length === 0) {
+            alert('Please enter valid phone numbers');
+            return;
+        }
+        
+        if (!message.trim()) {
+            alert('Please enter a message');
+            return;
+        }
+        
+        isSending = true;
+        currentIndex = 0;
+        
+        document.getElementById('send-bulk').style.display = 'none';
+        document.getElementById('stop-bulk').style.display = 'block';
+        document.getElementById('progress-bar').style.display = 'block';
+        document.getElementById('bulk-status').innerHTML = '<p>🔄 Starting bulk sending...</p>';
+        
+        // Start with first number
+        openWhatsAppWithUserInteraction();
+    }
+
+    function stopBulkSending() {
+        isSending = false;
+        document.getElementById('send-bulk').style.display = 'block';
+        document.getElementById('stop-bulk').style.display = 'none';
+        document.getElementById('bulk-status').innerHTML += '<p>⏹️ Bulk sending stopped</p>';
+    }
+
+    function openWhatsAppWithUserInteraction() {
+        if (!isSending || currentIndex >= numbersArray.length) {
+            if (currentIndex >= numbersArray.length) {
+                document.getElementById('bulk-status').innerHTML += '<p style="color: green;">🎉 Bulk sending completed!</p>';
+            }
+            stopBulkSending();
+            return;
+        }
+        
+        const number = numbersArray[currentIndex];
+        const message = document.getElementById('bulk-message').value;
+        const delay = document.getElementById('delay-time').value * 1000;
+        
+        // Update progress
+        const progress = ((currentIndex + 1) / numbersArray.length) * 100;
+        document.getElementById('progress-fill').style.width = `${progress}%`;
+        
+        document.getElementById('bulk-status').innerHTML = 
+            `Ready to send ${currentIndex + 1}/${numbersArray.length}: +91 ${number}<br>
+            <strong>Click "Continue" to open WhatsApp for this number</strong>`;
+        
+        // Create continue button for user interaction
+        const continueBtn = document.createElement('button');
+        continueBtn.textContent = 'Continue to Next Number';
+        continueBtn.style.background = '#10b981';
+        continueBtn.style.color = 'white';
+        continueBtn.style.border = 'none';
+        continueBtn.style.padding = '10px 15px';
+        continueBtn.style.borderRadius = '6px';
+        continueBtn.style.marginTop = '10px';
+        continueBtn.style.cursor = 'pointer';
+        
+        continueBtn.onclick = function() {
+            // Create WhatsApp link
+            const whatsappLink = `https://wa.me/91${number}?text=${encodeURIComponent(message)}`;
+            
+            // Open WhatsApp
+            window.open(whatsappLink, '_blank');
+            
+            // Remove continue button
+            continueBtn.remove();
+            
+            // Move to next number after delay
+            currentIndex++;
+            setTimeout(openWhatsAppWithUserInteraction, delay);
+        };
+        
+        document.getElementById('bulk-status').appendChild(continueBtn);
+    }
+</script>
