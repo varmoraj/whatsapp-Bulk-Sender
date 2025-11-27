@@ -1,17 +1,270 @@
+<div class="bulk-section" style="background: white; border-radius: 12px; padding: 25px; margin: 25px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+    <h3 class="section-title" style="font-size: 1.3rem; color: #1e293b; margin-bottom: 25px; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+        <span style="background: #1e293b; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">📱</span>
+        Bulk WhatsApp Link Generator
+    </h3>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;">
+        <!-- Left Side - Input Form -->
+        <div class="input-section">
+            <div class="form-group">
+                <label for="phone-numbers" style="font-weight: 500; color: #475569; margin-bottom: 8px; display: block; font-size: 0.9rem;">Phone Numbers (one per line)</label>
+                <textarea id="phone-numbers" placeholder="9123456789&#10;9876543210&#10;9765432109" rows="6" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: monospace; font-size: 0.85rem; resize: vertical; background: #f8fafc;"></textarea>
+                <p style="font-size: 0.75rem; color: #64748b; margin-top: 5px;">Enter numbers without country code</p>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label for="bulk-message" style="font-weight: 500; color: #475569; margin-bottom: 8px; display: block; font-size: 0.9rem;">Message Template</label>
+                <textarea id="bulk-message" placeholder="Hello, this is a payment reminder..." rows="5" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.85rem; resize: vertical; background: #f8fafc;"></textarea>
+                
+                <!-- Formatting Toolbar -->
+                <div class="formatting-toolbar" style="display: flex; gap: 6px; margin: 10px 0; padding: 8px; background: #f1f5f9; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <button type="button" class="format-btn" data-format="bold" style="width: 32px; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;" title="Bold">
+                        B
+                    </button>
+                    <button type="button" class="format-btn" data-format="italic" style="width: 32px; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-style: italic; font-size: 0.8rem;" title="Italic">
+                        I
+                    </button>
+                    <button type="button" class="format-btn" data-format="strikethrough" style="width: 32px; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: line-through; font-size: 0.8rem;" title="Strikethrough">
+                        S
+                    </button>
+                    <button type="button" class="format-btn" data-format="newline" style="width: 32px; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;" title="New Line">
+                        ↵
+                    </button>
+                    <div style="flex: 1;"></div>
+                    <button type="button" class="emoji-dropdown-btn" id="bulk-emoji-btn" style="display: flex; align-items: center; gap: 4px; background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px 10px; font-size: 0.8rem; cursor: pointer; color: #475569;">
+                        <span>😊</span>
+                        <span>Emoji</span>
+                    </button>
+                </div>
+                
+                <!-- Emoji Dropdown -->
+                <div class="emoji-dropdown-content" id="bulk-emoji-dropdown" style="display: none; position: absolute; background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px; z-index: 1000; width: 280px; max-height: 180px; overflow-y: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-top: 5px; grid-template-columns: repeat(8, 1fr); gap: 4px;">
+                    <!-- Emojis will be added by JavaScript -->
+                </div>
+            </div>
+
+            <button id="generate-links" style="background: #1e293b; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-size: 0.9rem; font-weight: 500; cursor: pointer; width: 100%; margin-top: 15px; transition: background 0.2s;"
+                    onmouseover="this.style.background='#334155';"
+                    onmouseout="this.style.background='#1e293b';">
+                Generate WhatsApp Links
+            </button>
+        </div>
+
+        <!-- Right Side - WhatsApp Preview -->
+        <div class="preview-section">
+            <div style="background: #e6ddd4; border-radius: 12px; padding: 0; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); height: fit-content;">
+                <div style="background: #075E54; color: white; padding: 12px; display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 36px; height: 36px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px;">WA</div>
+                    <div>
+                        <div style="font-weight: 500; font-size: 14px;" id="preview-contact-name">+91 1234567890</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Online</div>
+                    </div>
+                </div>
+                
+                <div style="padding: 12px; min-height: 180px; background: #e6ddd4;">
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+                        <div style="background: #dcf8c6; padding: 8px 12px; border-radius: 12px; max-width: 80%; border-bottom-right-radius: 4px;">
+                            <div id="preview-message-text" style="font-size: 13px; line-height: 1.4; color: #1f2937; white-space: pre-wrap;"></div>
+                            <div style="font-size: 10px; color: #667781; text-align: right; margin-top: 4px;">10:30 AM</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: white; padding: 8px 12px; border-top: 1px solid #e0e0e0;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <div style="flex: 1; background: #f0f0f0; border-radius: 20px; padding: 6px 12px; font-size: 13px; color: #667781;">Type a message</div>
+                        <div style="background: #075E54; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">➤</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 12px; text-align: center;">
+                <div style="font-size: 11px; color: #64748b; background: #f8fafc; padding: 6px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                    💡 <strong>Live Preview</strong> - See how your message looks
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Generated Links Section - Compact Layout -->
+    <div id="links-container" style="display: none; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h4 style="font-size: 1.1rem; color: #1e293b; margin: 0; font-weight: 600;">Generated WhatsApp Links</h4>
+            <div style="display: flex; gap: 8px;">
+                <button id="copy-all-links" style="background: #475569; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                    Copy All
+                </button>
+                <button id="open-all-links" style="background: #1e293b; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                    Open All
+                </button>
+            </div>
+        </div>
+        
+        <!-- Compact Table Layout -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <!-- Table Header -->
+            <div style="display: grid; grid-template-columns: 60px 1fr 100px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                <div style="padding: 10px 12px; font-weight: 600; color: #374151; font-size: 0.85rem; border-right: 1px solid #e2e8f0;">Sr.No</div>
+                <div style="padding: 10px 12px; font-weight: 600; color: #374151; font-size: 0.85rem; border-right: 1px solid #e2e8f0;">Mobile Number</div>
+                <div style="padding: 10px 12px; font-weight: 600; color: #374151; font-size: 0.85rem;">Status</div>
+            </div>
+            
+            <!-- Table Body -->
+            <div class="links-list" id="links-list" style="max-height: 300px; overflow-y: auto;">
+                <!-- Links will be added here -->
+            </div>
+        </div>
+        
+        <div id="bulk-status" style="margin-top: 12px; padding: 10px; border-radius: 4px; background: #f0f9ff; border: 1px solid #bae6fd; font-size: 0.8rem;"></div>
+    </div>
+</div>
+
 <script>
-    let isSending = false;
-    let currentIndex = 0;
-    let numbersArray = [];
+    let generatedLinks = [];
+    let currentOpenIndex = 0;
+    const popularEmojis = ['😊', '😂', '❤️', '😍', '🤔', '😎', '👍', '👋', '🎉', '🔥', '💯', '✨', '🙏', '😢', '😡', '🤩', '🥳', '😴', '🤗', '👏', '💕', '😘', '🤣', '😁', '😄', '😅', '🤷', '🙌', '💪', '👀', '💰', '📱', '🕒', '📍', '✅', '❌', '⭐', '🎯', '🚀', '💼'];
 
-    document.getElementById('send-bulk').addEventListener('click', startBulkSending);
-    document.getElementById('stop-bulk').addEventListener('click', stopBulkSending);
+    // Formatting functions
+    function applyFormatting(formatType) {
+        const messageInput = document.getElementById('bulk-message');
+        const start = messageInput.selectionStart;
+        const end = messageInput.selectionEnd;
+        const selectedText = messageInput.value.substring(start, end);
+        
+        let formattedText = '';
+        let newCursorPos = start;
+        
+        switch(formatType) {
+            case 'bold':
+                formattedText = `*${selectedText}*`;
+                newCursorPos = start + 1;
+                break;
+            case 'italic':
+                formattedText = `_${selectedText}_`;
+                newCursorPos = start + 1;
+                break;
+            case 'strikethrough':
+                formattedText = `~${selectedText}~`;
+                newCursorPos = start + 1;
+                break;
+            case 'newline':
+                formattedText = '\n';
+                newCursorPos = start + 1;
+                break;
+        }
+        
+        messageInput.value = messageInput.value.substring(0, start) + formattedText + messageInput.value.substring(end);
+        messageInput.focus();
+        messageInput.selectionStart = messageInput.selectionEnd = selectedText ? newCursorPos + selectedText.length : newCursorPos;
+        updateBulkPreview();
+    }
 
-    function startBulkSending() {
+    // Initialize formatting buttons
+    document.querySelectorAll('.format-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const formatType = this.getAttribute('data-format');
+            applyFormatting(formatType);
+            
+            // Add click effect
+            this.style.background = '#e5e7eb';
+            setTimeout(() => {
+                this.style.background = 'white';
+            }, 200);
+        });
+    });
+
+    // Initialize emoji dropdown
+    function initializeBulkEmojiDropdown() {
+        const emojiDropdown = document.getElementById('bulk-emoji-dropdown');
+        emojiDropdown.innerHTML = '';
+        
+        popularEmojis.forEach(emoji => {
+            const emojiBtn = document.createElement('button');
+            emojiBtn.type = 'button';
+            emojiBtn.className = 'emoji-btn';
+            emojiBtn.textContent = emoji;
+            emojiBtn.style.background = 'none';
+            emojiBtn.style.border = 'none';
+            emojiBtn.style.fontSize = '16px';
+            emojiBtn.style.cursor = 'pointer';
+            emojiBtn.style.padding = '4px';
+            emojiBtn.style.borderRadius = '4px';
+            emojiBtn.style.transition = 'background 0.2s';
+            emojiBtn.title = 'Click to add emoji';
+            
+            emojiBtn.addEventListener('click', function() {
+                const messageInput = document.getElementById('bulk-message');
+                const start = messageInput.selectionStart;
+                const end = messageInput.selectionEnd;
+                messageInput.value = messageInput.value.substring(0, start) + emoji + messageInput.value.substring(end);
+                messageInput.focus();
+                messageInput.selectionStart = messageInput.selectionEnd = start + emoji.length;
+                updateBulkPreview();
+                emojiDropdown.style.display = 'none';
+            });
+            
+            emojiBtn.addEventListener('mouseover', function() {
+                this.style.background = '#f3f4f6';
+            });
+            
+            emojiBtn.addEventListener('mouseout', function() {
+                this.style.background = 'none';
+            });
+            
+            emojiDropdown.appendChild(emojiBtn);
+        });
+    }
+
+    // Toggle emoji dropdown
+    document.getElementById('bulk-emoji-btn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        const dropdown = document.getElementById('bulk-emoji-dropdown');
+        dropdown.style.display = dropdown.style.display === 'grid' ? 'none' : 'grid';
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function() {
+        document.getElementById('bulk-emoji-dropdown').style.display = 'none';
+    });
+
+    // Update live preview with line breaks and formatting
+    function updateBulkPreview() {
+        const message = document.getElementById('bulk-message').value;
+        const numbersText = document.getElementById('phone-numbers').value;
+        const numbers = numbersText.split('\n').filter(num => num.trim());
+        
+        if (numbers.length > 0) {
+            const firstNumber = numbers[0].replace(/[^\d]/g, '');
+            document.getElementById('preview-contact-name').textContent = `+91 ${firstNumber}`;
+        }
+        
+        const previewElement = document.getElementById('preview-message-text');
+        
+        // Convert WhatsApp formatting to HTML
+        let formattedMessage = message
+            .replace(/\*(.*?)\*/g, '<strong>$1</strong>') // Bold
+            .replace(/_(.*?)_/g, '<em>$1</em>') // Italic
+            .replace(/~(.*?)~/g, '<del>$1</del>'); // Strikethrough
+        
+        // Preserve line breaks
+        formattedMessage = formattedMessage.replace(/\n/g, '<br>');
+        
+        previewElement.innerHTML = formattedMessage || 'Your message will appear here...';
+    }
+
+    // Event listeners
+    document.getElementById('bulk-message').addEventListener('input', updateBulkPreview);
+    document.getElementById('phone-numbers').addEventListener('input', updateBulkPreview);
+    document.getElementById('generate-links').addEventListener('click', generateAllLinks);
+    document.getElementById('copy-all-links').addEventListener('click', copyAllLinks);
+    document.getElementById('open-all-links').addEventListener('click', openAllLinksOneByOne);
+
+    function generateAllLinks() {
         const numbersText = document.getElementById('phone-numbers').value;
         const message = document.getElementById('bulk-message').value;
-        const delay = document.getElementById('delay-time').value * 1000;
         
-        numbersArray = numbersText.split('\n')
+        const numbersArray = numbersText.split('\n')
             .map(num => num.trim())
             .filter(num => num.length >= 10)
             .map(num => num.replace(/[^\d]/g, ''));
@@ -26,57 +279,228 @@
             return;
         }
         
-        // Ask for confirmation
-        if (!confirm(`Ready to send messages to ${numbersArray.length} numbers? Click OK to continue.`)) {
-            return;
+        generatedLinks = [];
+        const linksList = document.getElementById('links-list');
+        linksList.innerHTML = '';
+        
+        numbersArray.forEach((number, index) => {
+            const whatsappLink = `https://wa.me/91${number}?text=${encodeURIComponent(message)}`;
+            generatedLinks.push({
+                number: number,
+                link: whatsappLink,
+                clicked: false
+            });
+            
+            // Create compact table row - Mobile number and status side by side
+            const linkRow = document.createElement('div');
+            linkRow.id = `row-${index}`;
+            linkRow.style.display = 'grid';
+            linkRow.style.gridTemplateColumns = '60px 1fr 100px';
+            linkRow.style.borderBottom = '1px solid #f1f5f9';
+            linkRow.style.minHeight = '44px';
+            linkRow.style.alignItems = 'center';
+            linkRow.style.transition = 'all 0.2s ease';
+            linkRow.style.cursor = 'pointer';
+            
+            linkRow.innerHTML = `
+                <div style="padding: 8px 12px; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #475569; font-size: 0.85rem; border-right: 1px solid #f1f5f9;">
+                    ${index + 1}
+                </div>
+                <div style="padding: 8px 12px; display: flex; align-items: center; border-right: 1px solid #f1f5f9;">
+                    <a href="${whatsappLink}" target="_blank" 
+                       class="clickable-number"
+                       style="color: #1e40af; text-decoration: none; font-family: monospace; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; padding: 4px 8px; border-radius: 4px; display: block; width: 100%;"
+                       onclick="event.stopPropagation(); markAsClicked(${index});">
+                       +91 ${number}
+                    </a>
+                </div>
+                <div style="padding: 8px 12px; display: flex; align-items: center;">
+                    <div id="status-${index}" 
+                         style="background: #6b7280; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 500; text-align: center; width: 100%; transition: all 0.2s;">
+                         Pending
+                    </div>
+                </div>
+            `;
+            
+            // Hover effect for entire row (only for unclicked rows)
+            linkRow.addEventListener('mouseover', function() {
+                if (!generatedLinks[index].clicked) {
+                    this.style.background = '#f1f5f9';
+                    this.style.transform = 'translateY(-1px)';
+                }
+            });
+            
+            linkRow.addEventListener('mouseout', function() {
+                if (!generatedLinks[index].clicked) {
+                    this.style.background = 'white';
+                    this.style.transform = 'translateY(0)';
+                }
+            });
+            
+            // Click effect for entire row
+            linkRow.addEventListener('click', function() {
+                markAsClicked(index);
+            });
+            
+            linksList.appendChild(linkRow);
+        });
+        
+        // Remove last border
+        const lastRow = linksList.lastElementChild;
+        if (lastRow) {
+            lastRow.style.borderBottom = 'none';
         }
         
-        isSending = true;
-        currentIndex = 0;
-        
-        document.getElementById('send-bulk').style.display = 'none';
-        document.getElementById('stop-bulk').style.display = 'block';
-        document.getElementById('progress-bar').style.display = 'block';
-        
-        processNextNumber();
+        document.getElementById('links-container').style.display = 'block';
+        document.getElementById('bulk-status').innerHTML = `
+            <div style="color: #065f46; font-weight: 500;">
+                ✅ Generated ${generatedLinks.length} WhatsApp links - Click any number to open!
+            </div>
+        `;
     }
 
-    function stopBulkSending() {
-        isSending = false;
-        document.getElementById('send-bulk').style.display = 'block';
-        document.getElementById('stop-bulk').style.display = 'none';
-        document.getElementById('bulk-status').innerHTML += '<p>⏹️ Bulk sending stopped</p>';
-    }
-
-    async function processNextNumber() {
-        if (!isSending || currentIndex >= numbersArray.length) {
-            if (currentIndex >= numbersArray.length) {
-                document.getElementById('bulk-status').innerHTML += '<p style="color: green;">🎉 Bulk sending completed!</p>';
+    // Mark as clicked when number is clicked
+    function markAsClicked(index) {
+        if (generatedLinks[index].clicked) return; // Already clicked
+        
+        generatedLinks[index].clicked = true;
+        const statusElement = document.getElementById(`status-${index}`);
+        const rowElement = document.getElementById(`row-${index}`);
+        
+        if (statusElement) {
+            statusElement.textContent = 'Clicked ✓';
+            statusElement.style.background = '#374151';
+            statusElement.style.color = 'white';
+        }
+        
+        if (rowElement) {
+            // Permanent dark background for clicked rows
+            rowElement.style.background = '#e5e7eb';
+            rowElement.style.color = '#374151';
+            rowElement.style.borderLeft = '3px solid #10b981';
+            
+            // Make number text darker for better contrast
+            const numberLink = rowElement.querySelector('.clickable-number');
+            if (numberLink) {
+                numberLink.style.color = '#1e293b';
+                numberLink.style.fontWeight = '600';
             }
-            stopBulkSending();
+        }
+        
+        // Open WhatsApp
+        const link = generatedLinks[index].link;
+        window.open(link, '_blank');
+        
+        // Update status
+        updateClickedCount();
+    }
+
+    // Update clicked count in status
+    function updateClickedCount() {
+        const clickedCount = generatedLinks.filter(link => link.clicked).length;
+        const totalCount = generatedLinks.length;
+        const pendingCount = totalCount - clickedCount;
+        
+        let statusColor = '#065f46';
+        let statusMessage = `✅ ${clickedCount}/${totalCount} links clicked`;
+        
+        if (pendingCount > 0) {
+            statusMessage += ` - ${pendingCount} remaining`;
+            if (pendingCount <= 3) {
+                statusColor = '#dc2626'; // Red for last few
+                statusMessage = `⚠️ ${pendingCount} links remaining - Click to complete!`;
+            }
+        } else {
+            statusMessage = `🎉 All ${totalCount} links completed!`;
+        }
+        
+        document.getElementById('bulk-status').innerHTML = `
+            <div style="color: ${statusColor}; font-weight: 500;">
+                ${statusMessage}
+            </div>
+        `;
+    }
+
+    function copyAllLinks() {
+        if (generatedLinks.length === 0) {
+            alert('Please generate links first');
             return;
         }
         
-        const number = numbersArray[currentIndex];
-        const message = document.getElementById('bulk-message').value;
-        const delay = document.getElementById('delay-time').value * 1000;
+        const allLinksText = generatedLinks.map(item => item.link).join('\n\n');
         
-        // Update progress
-        const progress = ((currentIndex + 1) / numbersArray.length) * 100;
-        document.getElementById('progress-fill').style.width = `${progress}%`;
-        
-        document.getElementById('bulk-status').innerHTML = 
-            `Opening WhatsApp for ${currentIndex + 1}/${numbersArray.length}: +91 ${number}`;
-        
-        // Create WhatsApp link
-        const whatsappLink = `https://wa.me/91${number}?text=${encodeURIComponent(message)}`;
-        
-        // Open WhatsApp in new tab
-        const newTab = window.open(whatsappLink, '_blank');
-        
-        currentIndex++;
-        
-        // Wait before next number
-        setTimeout(processNextNumber, delay);
+        navigator.clipboard.writeText(allLinksText).then(() => {
+            const copyBtn = document.getElementById('copy-all-links');
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = '✅ Copied!';
+            
+            document.getElementById('bulk-status').innerHTML = `
+                <div style="color: #065f46; font-weight: 500;">
+                    ✅ All ${generatedLinks.length} links copied to clipboard!
+                </div>
+            `;
+            
+            setTimeout(() => {
+                copyBtn.textContent = originalText;
+            }, 2000);
+        });
     }
+
+    function openAllLinksOneByOne() {
+        if (generatedLinks.length === 0) {
+            alert('Please generate links first');
+            return;
+        }
+        
+        // Find unclicked links
+        const unclickedLinks = generatedLinks
+            .map((link, index) => ({...link, index}))
+            .filter(link => !link.clicked);
+        
+        if (unclickedLinks.length === 0) {
+            alert('All links have already been clicked!');
+            return;
+        }
+        
+        currentOpenIndex = 0;
+        const openBtn = document.getElementById('open-all-links');
+        openBtn.disabled = true;
+        openBtn.textContent = 'Opening...';
+        
+        openNextUnclickedLink(unclickedLinks);
+    }
+
+    function openNextUnclickedLink(unclickedLinks) {
+        if (currentOpenIndex >= unclickedLinks.length) {
+            document.getElementById('bulk-status').innerHTML = `
+                <div style="color: #065f46; font-weight: 500;">
+                    🎉 All ${generatedLinks.length} WhatsApp windows opened!
+                </div>
+            `;
+            
+            const openBtn = document.getElementById('open-all-links');
+            openBtn.disabled = false;
+            openBtn.textContent = 'Open All';
+            return;
+        }
+        
+        const linkData = unclickedLinks[currentOpenIndex];
+        markAsClicked(linkData.index);
+        
+        currentOpenIndex++;
+        const remaining = unclickedLinks.length - currentOpenIndex;
+        
+        document.getElementById('bulk-status').innerHTML = `
+            <div style="color: #7c2d12;">
+                Opening ${currentOpenIndex}/${unclickedLinks.length} unclicked links... (${remaining} remaining)
+            </div>
+        `;
+        
+        // 2 second delay between openings
+        setTimeout(() => openNextUnclickedLink(unclickedLinks), 2000);
+    }
+
+    // Initialize
+    initializeBulkEmojiDropdown();
+    updateBulkPreview();
 </script>
